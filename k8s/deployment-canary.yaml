@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scheduler-canary
+  namespace: scheduler-ns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scheduler
+      version: canary
+  template:
+    metadata:
+      labels:
+        app: scheduler
+        version: canary
+    spec:
+      containers:
+      - name: scheduler
+        image: jimm03/scheduler:canary
+        ports:
+        - containerPort: 7681
+        volumeMounts:
+        - name: data-storage
+          mountPath: /opt/app/data
+      volumes:
+      - name: data-storage
+        persistentVolumeClaim:
+          claimName: scheduler-pvc
+

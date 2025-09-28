@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scheduler-stable
+  namespace: scheduler-ns
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: scheduler
+      version: stable
+  template:
+    metadata:
+      labels:
+        app: scheduler
+        version: stable
+    spec:
+      containers:
+      - name: scheduler
+        image: jimm03/scheduler:stable
+        ports:
+        - containerPort: 7681
+        volumeMounts:
+        - name: data-storage
+          mountPath: /opt/app/data
+      volumes:
+      - name: data-storage
+        persistentVolumeClaim:
+          claimName: scheduler-pvc
+
