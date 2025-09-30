@@ -1,9 +1,9 @@
 #!/bin/bash
 
-file='data/data.json'
+file='storage_data/data.json'
 # create json file if it does not exist
 if [[ ! -e "$file" ]]; then
-	mkdir -p data
+	mkdir -p storage_data
 	echo "{}" > "$file"
 fi
 
@@ -49,7 +49,7 @@ do
 	done
 	
         # count number of employee in a team per shift
-	count=$(jq --arg name "$emp_name" --arg shift "$emp_shift"  --arg team "$emp_team" '.[$team][$shift] | length // 0' data/data.json)
+	count=$(jq --arg name "$emp_name" --arg shift "$emp_shift"  --arg team "$emp_team" '.[$team][$shift] | length // 0' storage_data/data.json)
  	if [[ "$count" -ge 2 ]]; then
 		echo "Error: Maximum employee per shift in team ${emp_team} reached. Exiting"
 		break
@@ -59,5 +59,3 @@ do
 	append_json=$(jq --arg name "$emp_name" --arg shift "$emp_shift"  --arg team "$emp_team" '.[$team][$shift] += [$name] // .[$team][$shift] = [$name]' "$file")
 	echo "$append_json" > "$file"
 done
-
-
