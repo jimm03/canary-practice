@@ -1,21 +1,10 @@
 FROM ubuntu:latest
 
-RUN apt-get update -y && \
-    apt-get install -y jq ttyd && \
-    apt-get clean
+RUN apt-get update -y && apt-get install jq wget -y && apt-get clean
 
 WORKDIR /opt/app
-
-COPY scheduler.sh /opt/app/
-
+COPY scheduler.sh /opt/app
+RUN wget https://github.com/tsl0922/ttyd/releases/download/1.7.7/ttyd.x86_64 && chmod +x ttyd.x86_64
 RUN chmod +x scheduler.sh
 
-# Directory for persistence
-VOLUME ["/opt/app/data"]
-
-# Expose ttyd web terminal
-EXPOSE 7681
-
-# Run script via ttyd so it’s web accessible
-CMD ["ttyd", "-p", "7681", "bash", "/opt/app/scheduler.sh"]
-
+ENTRYPOINT ["./ttyd.x86_64", "-p", "7681", "-W", "./scheduler.sh"]
